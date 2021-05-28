@@ -1,0 +1,33 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %} Auction listings{% endblock title %}
+
+{% block body %}
+
+<h1>Active Listings</h1>
+{% comment %} loop through the listings object {% endcomment %}
+{% for list in listings %}
+<a style="color:black; text-decoration:none;" href='{% url 'details' list.id %}'>
+<div class="my-5" id="list_container" style="border: 0.5px solid; padding: 10px;border-radius:1%">
+<table>
+  <tr>
+    <td class="mr-10">
+        <div class="mx-3"><img style="width: 250px; height: 200px;" id="list_img" src={{list.image}}></div>
+    </td>
+    <td>
+        <div>
+        <h3> {{list.title}} </h3>
+        <p>Description: {{list.description}}</p>
+        <p>Price: ${{list.price}}.00 </p>
+        <p> Created on: {{list.date_created}} </p>
+        <p>Category: {{list.category}} </p>
+        </div>
+    </td>
+  </tr>
+</table>
+
+ </div>
+ </a>
+{% endfor %}
+
+{% endblock %}

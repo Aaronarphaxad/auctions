@@ -1,0 +1,127 @@
+{% extends 'auctions/layout.html' %}
+
+{% block title %}List Item{% endblock title %}
+
+{% block body %}
+
+{% comment %} Display Item details {% endcomment %}
+<div class="mb-5" style="margin-left: 10px;"> 
+
+<h2>{{title.title}}</h2>
+<hr>
+
+<div> <img style="width: 400px; margin-bottom: 20px; height: 400px;" src={{title.image}}/> </div>
+
+<p class="font-weight-bold d-inline mb-5">Description: </p> <span>{{title.description}}</span><br>
+
+<p class="font-weight-bold d-inline mb-5">Price: </p><span>${{title.price}}</span><br>
+
+<p class="font-weight-bold d-inline mb-5">Date created: </p><span>{{title.date_created}}</span><br>
+
+<p class="font-weight-bold d-inline my-5">Category: </p><span>{{title.category}}</span><br>
+
+</div>
+{% comment %} end display {% endcomment %}
+
+
+<div>
+ {% if user.is_authenticated %}
+
+
+     {% if messages %}
+            <ul class="messages">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+            </ul>
+     {% endif %}
+
+     <a href="{% url 'watchlist_add' title.id %}" role="button" class="btn btn-outline-success btn-md">Add to Watchlist</a>
+     <hr>
+
+     <div class="my-5 ml-3">
+
+     {% if message %}
+        <div class="mb-3" style="color:red;">{{ message }}</div>
+    {% endif %}
+
+    {% if bid_message %}
+        <div class="mb-3" style="color:green;">{{ bid_message }}</div>
+    {% endif %}
+
+    {% if cmessage %}
+        <div class="mb-3" style="color:red;">{{ cmessage }}</div>
+    {% endif %}
+
+{% comment "" %}If auction is closed, hide the bid form{% endcomment %}
+            {% if title.closed == True %}
+
+                <p style="color:red;">Auction closed</p>
+
+            {% else %}
+                <form action="/active_listings/{{title.id}}/" method="POST">
+                {% csrf_token %}
+                    {{bform.as_p}}
+                    <input type="hidden" value>
+                    <button class="btn btn-success">Place Bid</button>
+                </form>
+
+                {% comment "" %}Let the creator of listing have access to close the action{% endcomment %}  
+                <div class="my-3">
+                        {% if title.creator == title.creator %}
+
+                            <form action="/close_auction/{{title.id}}/" method="POST">
+                            {% csrf_token %}
+                                <button class="btn btn-success">Close Auction</button>
+                            </form>
+
+                        {% endif %}
+                </div>
+            {% endif %}
+
+
+          
+
+
+</div>
+     
+     <hr>
+     {% comment %} Add comment {% endcomment %}
+
+     <div class="mb-3 ml-3">
+
+    <h4> Add a comment </h4>
+     <form action="/comments/{{title.id}}/" method="POST">
+     {% csrf_token %}
+        {{cform.as_p}}
+        <button class="btn btn-success">Submit Comment</button>
+     </form>
+     </div>
+     
+ {% else %}
+      Sign in to add to to watchlist
+{% endif %}
+
+</div>
+
+<hr>
+{% comment %} Display comments {% endcomment %}
+<h4>Comments</h4>
+<div style="border: 0.5px solid; padding: 10px;border-radius:1%; width:300px;">
+{% for comment in comments %}
+
+<h5 class="text-capfirst">{{comment.name}}</h5>
+<p class=""><em>{{comment.body}}<em></p>
+
+<div>
+<div class="mr-3">{{comment.email}}<div>
+{{comment.created_on}}
+<hr>
+</div>
+
+
+{% endfor %}
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "auctions/layout.html" %}
+
+
+{% block body%}
+   <h3 class="mb-5">Categories</h3>
+
+<p><a href="{% url 'shoes' %}">Shoes</a></p>
+<p><a href="{% url 'electronics' %}">Electronics</a></p>
+<p><a href="{% url 'clothing' %}">Clothing</a></p>
+<p><a href="{% url 'smartphones' %}">Smartphones</a></p>
+
+{% endblock %}

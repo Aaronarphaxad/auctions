@@ -1,0 +1,13 @@
+{% extends "auctions/layout.html" %}
+
+
+{% block body%}
+
+{% for phone in phones %}
+
+<a href="{% url 'details' phone.id %}">
+<div>{{phone}}</div>
+</a>
+{% endfor %}
+
+{% endblock %}

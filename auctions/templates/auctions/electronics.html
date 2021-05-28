@@ -1,0 +1,14 @@
+{% extends "auctions/layout.html" %}
+
+
+{% block body%}
+
+{% for elect in elects %}
+
+<a href="{% url 'details' elect.id %}">
+<div>{{elect}}</div>
+</a>
+{% endfor %}
+
+
+{% endblock %}
