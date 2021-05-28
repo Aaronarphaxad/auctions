@@ -43,6 +43,7 @@ def logout_view(request):
 @login_required
 def create_listing(request):
     if request.method == "POST":
+        # get all form data
         form = Create_form(request.POST or None)
         if form.is_valid():
             title = form.cleaned_data["title"]
@@ -52,7 +53,7 @@ def create_listing(request):
             date = form.cleaned_data["date_created"]
             category = form.cleaned_data["category"]
             user = request.user
-
+            # save to Auction_listings table
             auc = Auction_listings(title=title,
                     description=description,
                     image=image,price=price,
@@ -61,6 +62,7 @@ def create_listing(request):
                     creator = user
                     )
 
+            # if the the image length is less than or equal to 200, save else, give the error
             if len(image) <= 200:
                 auc.save()
                 return HttpResponseRedirect(reverse('success'))
@@ -87,9 +89,10 @@ def categories(request):
 @login_required
 def list_item(request, auc_id):
     if request.method == "POST":
+        # get bid form data
         form = Bid_form(request.POST or None)
             
-
+        # if data valid, get data, auc listing id, current user and price
         if form.is_valid():
             bid = form.cleaned_data["bid"]
             object = get_object_or_404(Auction_listings, pk=auc_id)
@@ -98,15 +101,16 @@ def list_item(request, auc_id):
             username = request.user
             
             
-
+            # if bid is less than price, give error message
             if bid < price:
                 message = "Bid must be more than original price"
                 title = get_object_or_404(Auction_listings, pk=auc_id)
                 return render(request, "auctions/list.html", { "message": message,
                     "title": title, "cform": Comment_form, "bform": Bid_form})
 
+            # get all bids
             all_bids = Bids.objects.filter(item_id=item_id).values()
-            
+            # if there are no bids, save the current bid to the bids table and print message(user won the bid)
             if len(all_bids) == 0:
                 b = Bids(
                     user=username,
@@ -118,12 +122,15 @@ def list_item(request, auc_id):
                 title = get_object_or_404(Auction_listings, pk=auc_id)
                 return render(request, "auctions/list.html", { "bid_message": bid_message,
                     "title": title, "cform": Comment_form, "bform": Bid_form})
-
+            
+            # loop through all bids. if current bid is greater than old bid or lower. print message accordingly
             for each_bid in all_bids:
                 old_bid = each_bid["bid"]
                 if bid > old_bid:
                     cmessage = "You won the bid!"
                 cmessage = "There's a higher bid"
+
+            # save the bid
             b = Bids(
                     user=username,
                     item_id=item_id,
