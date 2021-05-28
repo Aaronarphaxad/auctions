@@ -149,6 +149,7 @@ def list_item(request, auc_id):
 
 def comment(request, auc_id):
     if request.method == "POST":
+        # if comment data is valid, save to comments table
         form = Comment_form(request.POST or None)
         if form.is_valid():
             listing_id = auc_id
